@@ -3,6 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+from .utils import expand_page
+
 BASE_URL = "https://www.basketball-reference.com"
 SEASONS_URL = "https://www.basketball-reference.com/leagues/NBA_{}_per_game.html"
 
@@ -33,7 +35,6 @@ def get_players_url(season_url: str) -> list[str]:
     """Get a list of player links to scrape"""
     players = []
 
-    print(f"Getting players for {season_url}")
     r = session.get(season_url)
     soup = BeautifulSoup(r.text, "html.parser")
     for a in soup.find_all("a", href=re_player):
@@ -45,7 +46,7 @@ def get_players_url(season_url: str) -> list[str]:
 
 def get_player_soup(player_url: str) -> BeautifulSoup:
     """Given a url, return the player's data as a BeautifulSoup object"""
-    print(f"Getting data for {player_url}")
     r = session.get(player_url)
     soup = BeautifulSoup(r.text, "html.parser")
+    expand_page(soup)
     return soup
