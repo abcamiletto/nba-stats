@@ -115,7 +115,7 @@ def get_player_birth_place(soup: BeautifulSoup, **kwargs) -> str:
 def get_player_college(soup: BeautifulSoup, **kwargs) -> str:
     """Get the player college"""
     # Find text of <p> with 'College' inside
-    text = find_text_of_p_with(soup, "College")
+    text = find_text_of_p_with(soup, "College", exclude="Born")
 
     if text is None:
         logging.warning("Could not find college info")
