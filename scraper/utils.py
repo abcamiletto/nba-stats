@@ -15,7 +15,7 @@ def find_text_of_p_with(soup, text, exclude=None):
         # Get the text of the <p> tag without the newlines
         p_text = " ".join(p.text.split())
         if text in p_text:
-            if any([e in p.text for e in exclude]):
+            if any([e in p_text for e in exclude]):
                 continue
 
             return p_text
