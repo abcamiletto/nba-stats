@@ -6,10 +6,16 @@ def expand_page(soup):
 
 
 def find_text_of_p_with(soup, text, exclude=None):
+    """Find the text of a p tag with a specific text"""
+    if exclude is None:
+        exclude = []
+
     ps = soup.findAll("p")
     for p in ps:
-        if text in p.text:
-            if exclude is not None and exclude in p.text:
+        # Get the text of the <p> tag without the newlines
+        p_text = " ".join(p.text.split())
+        if text in p_text:
+            if any([e in p.text for e in exclude]):
                 continue
-            # Return the text of the <p> tag without the newlines
-            return " ".join(p.text.split())
+
+            return p_text

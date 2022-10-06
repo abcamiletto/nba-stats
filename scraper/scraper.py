@@ -90,7 +90,7 @@ def get_player_weight(soup: BeautifulSoup, **kwargs) -> int:
 def get_player_birth_date(soup: BeautifulSoup, **kwargs) -> datetime.date:
     """Get the player birth date"""
     # Find text of <p> with 'Born' inside
-    text = find_text_of_p_with(soup, "Born")
+    text = find_text_of_p_with(soup, "Born:")
 
     if text is None:
         logging.warning("Could not find player birth date")
@@ -105,7 +105,7 @@ def get_player_birth_date(soup: BeautifulSoup, **kwargs) -> datetime.date:
 def get_player_birth_place(soup: BeautifulSoup, **kwargs) -> str:
     """Get the player birth place"""
     # Find text of <p> with 'Born' inside
-    text = find_text_of_p_with(soup, "Born")
+    text = find_text_of_p_with(soup, "Born:")
 
     # Find text after 'in'
     str_birth = re.search(r"(?<=in ).*", text)[0]
@@ -115,7 +115,7 @@ def get_player_birth_place(soup: BeautifulSoup, **kwargs) -> str:
 def get_player_college(soup: BeautifulSoup, **kwargs) -> str:
     """Get the player college"""
     # Find text of <p> with 'College' inside
-    text = find_text_of_p_with(soup, "College", exclude="Born")
+    text = find_text_of_p_with(soup, "College:")  # , exclude=["Born", "born"])
 
     if text is None:
         logging.warning("Could not find college info")
@@ -142,7 +142,7 @@ def get_player_draft(soup: BeautifulSoup, **kwargs) -> str:
     return draft
 
 
-def get_player_salary(soup: BeautifulSoup, **kwargs) -> int:
+def get_player_total_salary(soup: BeautifulSoup, **kwargs) -> int:
     """Get the player salary"""
 
     # This info is loaded dynamically with javascript. We need to use selenium to get it
@@ -195,6 +195,6 @@ scrap_functions = {
     "birth_place": get_player_birth_place,
     "college": get_player_college,
     "draft": get_player_draft,
-    "salary": get_player_salary,
+    "total_salary": get_player_total_salary,
     "position": get_player_position,
 }
