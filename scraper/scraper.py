@@ -1,4 +1,5 @@
 import datetime
+import logging
 import re
 
 from bs4 import BeautifulSoup, Comment
@@ -8,14 +9,16 @@ from .utils import find_text_of_p_with
 
 def get_player_stats(soup: BeautifulSoup, season: str) -> dict:
     """Get the player stats"""
-
     info = {}
     for tr in soup.find_all("tr"):
-        if tr.find("th", {"data-stat": "season"}) is not None:
-            season = tr.find("th", {"data-stat": "season"}).text
-            info[season] = {}
-            for td in tr.find_all("td"):
-                info[season][td["data-stat"]] = td.text
+        tr_season = tr.find("th", {"data-stat": "season"})
+        if tr_season is not None:
+            if tr_season.text == season:
+                for td in tr.find_all("td"):
+                    info[td["data-stat"]] = td.text
+
+    if not info:
+        logging.warning(f"Could not find stats for season {season}")
 
     return info
 
@@ -27,6 +30,7 @@ def get_player_seasons(soup: BeautifulSoup, **kwargs) -> list[str]:
     for tr in soup.find_all("tr"):
         if tr.find("th", {"data-stat": "season"}) is not None:
             season = tr.find("th", {"data-stat": "season"}).text
+            # If it is formatted like 2019-20, then it's a season
             if "-" in season:
                 seasons.append(season)
 
@@ -54,7 +58,7 @@ def get_player_name(soup: BeautifulSoup, **kwargs) -> str:
     res = div.find("h1").find("span")
 
     if res is None:
-        raise ValueError("Could not find player name")
+        logging.warning("Could not find player name")
 
     return res.text
 
@@ -66,8 +70,9 @@ def get_player_height(soup: BeautifulSoup, **kwargs) -> int:
     for p in ps:
         if "cm," in p.text:
             return int(p.text.split("cm,")[0][-3:])
+
     # If we get here, we could not find the height
-    raise ValueError("Could not find player height")
+    logging.warning("Could not find player height")
 
 
 def get_player_weight(soup: BeautifulSoup, **kwargs) -> int:
@@ -77,14 +82,20 @@ def get_player_weight(soup: BeautifulSoup, **kwargs) -> int:
     for p in ps:
         if "cm," in p.text:
             return int(p.text.split("kg)")[0][-3:])
+
     # If we get here, we could not find the weight
-    raise ValueError("Could not find player weight")
+    logging.warning("Could not find player weight")
 
 
 def get_player_birth_date(soup: BeautifulSoup, **kwargs) -> datetime.date:
     """Get the player birth date"""
     # Find text of <p> with 'Born' inside
     text = find_text_of_p_with(soup, "Born")
+
+    if text is None:
+        logging.warning("Could not find player birth date")
+        return None
+
     str_date = re.search(r"(?<=Born: ).*(\s[0-9]{4})", text)[0]
 
     # Convert to datetime
@@ -106,19 +117,28 @@ def get_player_college(soup: BeautifulSoup, **kwargs) -> str:
     # Find text of <p> with 'College' inside
     text = find_text_of_p_with(soup, "College")
 
-    college = text.split("College: ")[1]
+    if text is None:
+        logging.warning("Could not find college info")
+        return None
+    elif "College:" in text:
+        college = text.split("College: ")[1]
+    elif "Colleges:" in text:
+        college = text.split("Colleges: ")[1]
+    else:
+        raise NotImplementedError(f"Could not find college info on {text}")
+
     return college
 
 
 def get_player_draft(soup: BeautifulSoup, **kwargs) -> str:
     # Find text of <p> with 'Draft' inside
-    try:
-        text = find_text_of_p_with(soup, "Draft")
-    # Sometimes draft info are not available
-    except KeyError:
+    text = find_text_of_p_with(soup, "Draft")
+
+    if text is None:
+        logging.warning("Could not find draft info")
         return None
 
-    draft = text.split("Draft: ")[1]
+    draft = text.split("Draft: ")[1] if text else None
     return draft
 
 
@@ -143,7 +163,7 @@ def get_player_salary(soup: BeautifulSoup, **kwargs) -> int:
                 return int(salary[1:].replace(",", ""))
 
     # If we get here, we could not find the salary
-    raise ValueError("Salary not found")
+    logging.warning("Could not find player salary")
 
 
 def get_player_position(soup: BeautifulSoup, **kwargs) -> str:
@@ -160,7 +180,7 @@ def get_player_position(soup: BeautifulSoup, **kwargs) -> str:
             return position
 
     # If we get here, we could not find the position
-    raise ValueError("Position not found")
+    logging.warning("Could not find player position")
 
 
 # Regroup functions in a dict

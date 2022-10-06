@@ -11,6 +11,3 @@ def find_text_of_p_with(soup, text):
         if text in p.text:
             # Return the text of the <p> tag without the newlines
             return " ".join(p.text.split())
-
-    # If we get here, we didn't find the text
-    raise KeyError(f"Could not find string '{text}' in <p> tags")
