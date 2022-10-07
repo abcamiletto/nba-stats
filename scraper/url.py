@@ -2,7 +2,6 @@ import logging
 import re
 
 import chromedriver_autoinstaller
-import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
@@ -18,7 +17,7 @@ BASE_URL = "https://www.basketball-reference.com"
 SEASONS_URL = "https://www.basketball-reference.com/leagues/NBA_{}_per_game.html"
 
 # Set up regex
-re_player = re.compile(r"/players/([a-z])/([a-z]{7})([0-9]{2})\.html")
+re_player = re.compile(r"/players/([a-z])/([a-z]{3,9})([0-9]{2})\.html")
 re_season = re.compile(r"/leagues/NBA_([0-9]{4})_per_game\.html")
 
 
