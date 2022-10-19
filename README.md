@@ -1,4 +1,4 @@
-# NBA Scarper Package
+# NBA Scraper Package
 
 This package is used to scrape NBA data from [Basketball Reference](https://www.basketball-reference.com/).
 
