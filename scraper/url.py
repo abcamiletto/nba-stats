@@ -11,10 +11,15 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
-from .utils import expand_page
-
 BASE_URL = "https://www.basketball-reference.com"
 SEASONS_URL = "https://www.basketball-reference.com/leagues/NBA_{}_per_game.html"
+
+def expand_page(soup):
+    try:
+        soup.find("button", {"id": "meta_more_button"}).click()
+    except:
+        pass
+
 
 # Set up regex
 re_player = re.compile(r"/players/([a-z])/([a-z]{3,9})([0-9]{2})\.html")
