@@ -154,6 +154,7 @@ cython_debug/
 
 # data folder
 data/
+urls/
 
 # TXT logs
 log.txt
