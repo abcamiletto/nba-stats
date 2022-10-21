@@ -1,9 +1,10 @@
 import pathlib
 
 # year: second half of the season - ex. 2010 --> 2009-10
-START_YEAR = 2010
-END_YEAR = 2020
+START_YEAR = 2015
+END_YEAR = 2022
 OUTPUT_DIR = pathlib.Path() / 'data'
+URLS_DIR = pathlib.Path() / 'urls'
 OVERWRITE = True
 
 # dataset textual constants
