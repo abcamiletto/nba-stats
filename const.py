@@ -4,7 +4,8 @@ import pathlib
 START_YEAR = 2015
 END_YEAR = 2022
 OUTPUT_DIR = pathlib.Path() / 'data'
-URLS_DIR = pathlib.Path() / 'urls'
+URLS_SUBDIR = 'urls'
+PLAYERS_SUBDIR = 'players'
 OVERWRITE = True
 
 # dataset textual constants
